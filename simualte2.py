@@ -1,46 +1,30 @@
 from src.services.SongRecommender import SongRecommender
-import json
-
-recommender = SongRecommender('E:/Michal/Dokumenty/Projekty/song-recommendation/data/tracks_features.csv')
-recommender.load_sim_data('E:/Michal/Dokumenty/Projekty/song-recommendation/data_sim/playlists_filtered.csv')
-
 
 def main():
-    # Get the recommendations
-    recoms = recommender.simulate(top_n=3)
+    results = recommender.simulate(top_n=3, removal_count=3)
 
-    # Extract components from the result
-    global_recommendations = recoms['global_recommendations']
-    removed_recs = recoms['removed_songs_recommendations']
-    playlist = recoms['playlist']
-    removed_songs = recoms['removed_songs']
-
-    # Print header information
-    print("=" * 50)
-    print(f"Playlist: {playlist}")
-    print(f"Removed Songs: {', '.join(removed_songs)}")
-    print("=" * 50)
-    print("\nGLOBAL RECOMMENDATIONS:\n")
-
-    # Print Global Recommendations
-    for rec in global_recommendations:
-        print("-" * 50)
+    print("=" * 60)
+    print(f"Playlist: {results['playlist']}")
+    print(f"Removed Songs: {', '.join(results['removed_songs'])}")
+    print(f"Input Songs: {', '.join(results['input_songs'])}")
+    print("=" * 60)
+    print("\nGLOBAL RECOMMENDATIONS per Input Song:\n")
+    for rec in results['global_recommendations']:
         print(f"Input Song: {rec['input_song']}")
         for idx, r in enumerate(rec['recommendations'], start=1):
             print(f"  {idx}. {r['recommended_song']} by {r['artists']} (Similarity: {r['similarity']})")
-        print("-" * 50)
-        print()
+        print("-" * 60)
 
-    print("\nREMOVED SONGS RECOMMENDATIONS:\n")
-    # Print Recommendations from Removed Songs
-    for rec in removed_recs:
-        print("-" * 50)
-        print(f"Input Song: {rec['input_song']}")
-        for idx, r in enumerate(rec['recommendations'], start=1):
-            print(f"  {idx}. {r['recommended_song']} by {r['artists']} (Similarity: {r['similarity']})")
-        print("-" * 50)
-        print()
+    print("\nTOP RECOMMENDATIONS (Most Similar to Removed Songs):\n")
+    for idx, rec in enumerate(results['top_recommendations'], start=1):
+        print(f"{idx}. {rec['recommended_song']} by {rec['artists']} "
+              f"(Aggregated Similarity: {rec['aggregated_similarity']}, "
+              f"Compared to: {rec['compared_to']})")
+    print("=" * 60)
 
 
 if __name__ == '__main__':
+    recommender = SongRecommender('E:/Michal/Dokumenty/Projekty/song-recommendation/data/tracks_features.csv')
+    recommender.load_sim_data('E:/Michal/Dokumenty/Projekty/song-recommendation/data_sim/playlists_filtered.csv')
     main()
+
