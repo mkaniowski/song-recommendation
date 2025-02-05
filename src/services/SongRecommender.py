@@ -132,8 +132,8 @@ class SongRecommender:
 
         # Step 3: Use the remaining songs as input (limit to 30 songs).
         reduced_playlist_df = playlist_songs_df[~playlist_songs_df['trackname'].isin(removed_songs)]
-        if len(reduced_playlist_df) > 30:
-            reduced_playlist_df = reduced_playlist_df.sample(30)
+        if len(reduced_playlist_df) > 20:
+            reduced_playlist_df = reduced_playlist_df.sample(20)
         input_song_names = reduced_playlist_df['trackname'].tolist()
 
         # Step 4: Get recommendations for each input song.
